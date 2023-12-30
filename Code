@@ -1,0 +1,59 @@
+
+using System.Text;
+using System.Xml.Linq;
+
+class Program
+{
+    static void Main()
+    {
+        string original = "Text to encrypt";
+        string key = "SecretKey1235";
+
+        string encrypted = CustomEncryption.Encrypt(original, key);
+        Console.WriteLine("Encrypted Text: " + encrypted);
+
+        string decrypted = CustomEncryption.Decrypt(encrypted, key);
+        Console.WriteLine("Decrypted Text: " + decrypted);
+    }
+}
+
+public class CustomEncryption
+{
+    public static string Encrypt(string plainText, string key)
+    {
+        byte[] plainBytes = Encoding.UTF8.GetBytes(plainText);
+        byte[] keyBytes = Encoding.UTF8.GetBytes(key);
+        //convert in a sequence of bytes encoded in UTF 8
+
+        byte[] encryptedBytes = new byte[plainBytes.Length];
+
+        for (int i = 0; i < plainBytes.Length; i++)
+        {
+            encryptedBytes[i] = (byte)(plainBytes[i] ^ keyBytes[i % keyBytes.Length]);
+            //XOR operation between the key and the text
+        }
+
+        return Convert.ToBase64String(encryptedBytes);
+        //Convert the binary elements into a string 
+    }
+
+    public static string Decrypt(string cipherText, string key)
+    {
+        byte[] encryptedBytes = Convert.FromBase64String(cipherText);
+        // Convert the string elements into binary one
+        byte[] keyBytes = Encoding.UTF8.GetBytes(key);
+        //convert in a sequence of bytes encoded in UTF 8
+
+        byte[] decryptedBytes = new byte[encryptedBytes.Length];
+
+        for (int i = 0; i < encryptedBytes.Length; i++)
+        {
+            decryptedBytes[i] = (byte)(encryptedBytes[i] ^ keyBytes[i % keyBytes.Length]);
+            //XOR operation between the key and the encrypted text
+        }
+
+        return Encoding.UTF8.GetString(decryptedBytes);
+        //convert the bytes element into a string
+    }
+}
+
